@@ -31,6 +31,12 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 const IS_PROD = process.env.NODE_ENV === 'production';
 
+// Trust the first proxy hop (Render's load balancer / Vercel proxy) so
+// req.ip correctly reflects the real client IP from X-Forwarded-For.
+// Without this, all requests appear to come from the same proxy IP and
+// everyone shares a single rate-limit bucket.
+app.set('trust proxy', 1);
+
 app.disable('x-powered-by');
 
 app.use(securityHeaders);
@@ -48,8 +54,8 @@ app.use(attachUser);
 
 // Generic API guardrail.
 app.use('/api', rateLimit({ windowMs: 10 * 60 * 1000, max: 600, message: 'Rate limit exceeded — slow down and try again.' }));
-// Stricter brute-force protection on credential endpoints.
-app.use('/api/auth', rateLimit({ windowMs: 15 * 60 * 1000, max: 20, message: 'Too many login attempts — try again in a few minutes.' }));
+// Brute-force protection on credential endpoints — 30 per 15 min per real IP.
+app.use('/api/auth', rateLimit({ windowMs: 15 * 60 * 1000, max: 30, message: 'Too many login attempts — try again in a few minutes.' }));
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', service: 'terratwin-backend' });
