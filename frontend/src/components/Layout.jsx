@@ -280,26 +280,30 @@ export default function Layout() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="w-10 h-1 bg-[var(--border)] rounded-full mx-auto mb-4" />
-            <div className="grid grid-cols-3 gap-2">
-              {MORE_TABS.filter(
-                (tab) =>
-                  (!tab.engineerOnly || user?.role === 'engineer' || user?.role === 'admin') &&
-                  (!tab.adminOnly || user?.role === 'admin')
-              ).map((tab) => (
-                <NavLink
-                  key={tab.to}
-                  to={tab.to}
-                  className={({ isActive }) =>
-                    `flex flex-col items-center justify-center gap-1 py-3 px-2 rounded-xl text-[11px] font-medium text-center transition ${
-                      isActive
-                        ? 'bg-cyan/10 text-cyan'
-                        : 'bg-[var(--bg-panel-2)] text-[var(--text-dim)] hover:text-[var(--text)]'
-                    }`
-                  }
-                >
-                  {t(tab.tKey)}
-                </NavLink>
-              ))}
+            {/* Scrollable grid so all tabs fit on small screens */}
+            <div className="overflow-y-auto max-h-[55vh]">
+              <p className="text-[10px] text-[var(--text-faint)] uppercase tracking-widest mb-2 px-1">Pages</p>
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                {MORE_TABS.filter(
+                  (tab) =>
+                    (!tab.engineerOnly || user?.role === 'engineer' || user?.role === 'admin') &&
+                    (!tab.adminOnly || user?.role === 'admin')
+                ).map((tab) => (
+                  <NavLink
+                    key={tab.to}
+                    to={tab.to}
+                    className={({ isActive }) =>
+                      `flex flex-col items-center justify-center gap-1 py-3 px-2 rounded-xl text-[11px] font-medium text-center transition ${
+                        isActive
+                          ? 'bg-cyan/10 text-cyan'
+                          : 'bg-[var(--bg-panel-2)] text-[var(--text-dim)] hover:text-[var(--text)]'
+                      }`
+                    }
+                  >
+                    {t(tab.tKey)}
+                  </NavLink>
+                ))}
+              </div>
             </div>
           </div>
         </div>

@@ -152,7 +152,7 @@ export default function SparkAssistant() {
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? 'Close SPARK assistant' : 'Open SPARK assistant'}
-        className="tt-float fixed bottom-24 lg:bottom-6 right-6 z-[2000] flex items-center gap-2.5 rounded-full border border-cyan/50 bg-[var(--bg-panel)] py-2 pl-2.5 pr-4 shadow-[0_10px_34px_rgba(0,0,0,0.5)] transition hover:border-cyan hover:bg-[var(--bg-panel-2)] hover:scale-[1.03]"
+        className="tt-float fixed bottom-24 lg:bottom-6 left-4 lg:left-auto lg:right-6 z-[2000] flex items-center gap-2.5 rounded-full border border-cyan/50 bg-[var(--bg-panel)] py-2 pl-2.5 pr-4 shadow-[0_10px_34px_rgba(0,0,0,0.5)] transition hover:border-cyan hover:bg-[var(--bg-panel-2)] hover:scale-[1.03]"
       >
         <span className="relative shrink-0">
           <span className="flex h-9 w-9 items-center justify-center rounded-full text-[#03151F]" style={{ background: LOGO_GRADIENT }}>
@@ -173,7 +173,7 @@ export default function SparkAssistant() {
         <div
           role="dialog"
           aria-label="SPARK assistant"
-          className="tt-pop-in fixed bottom-[124px] lg:bottom-[92px] right-6 z-[2100] flex w-[340px] max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-panel)] shadow-2xl"
+          className="tt-pop-in fixed bottom-[124px] lg:bottom-[92px] left-4 lg:left-auto lg:right-6 z-[2100] flex w-[340px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-panel)] shadow-2xl"
         >
           <div className="h-1 w-full" style={{ background: LOGO_GRADIENT }} />
           <div className="flex items-center gap-2.5 border-b border-[var(--border)] bg-[var(--bg-panel-2)] px-4 py-3">
