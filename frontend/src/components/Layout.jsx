@@ -30,14 +30,28 @@ const MOBILE_TABS = [
   { to: '/planner', tKey: 'nav.plan' },
   { to: '/field', tKey: 'nav.field' },
   { to: '/live', tKey: 'nav.live' },
-  { to: '/discoveries', tKey: 'nav.report' },
 ];
+
+// Extra pages shown in the "More" slide-up drawer on mobile
+const MORE_TABS = [
+  { to: '/twin', tKey: 'nav.twin' },
+  { to: '/analytics', tKey: 'nav.analytics' },
+  { to: '/methodology', tKey: 'nav.methodology' },
+  { to: '/discoveries', tKey: 'nav.report' },
+  { to: '/engineer', tKey: 'nav.engineer', engineerOnly: true },
+  { to: '/imports', tKey: 'nav.imports', engineerOnly: true },
+  { to: '/audit', tKey: 'nav.audit', engineerOnly: true },
+  { to: '/registry', tKey: 'nav.registry', engineerOnly: true },
+  { to: '/users', tKey: 'nav.users', adminOnly: true },
+];
+
 
 export default function Layout() {
   const { user, logout } = useAuth();
   const { lang, setLang, t } = useLanguage();
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const settingsRef = useRef(null);
 
   useEffect(() => {
@@ -86,8 +100,10 @@ export default function Layout() {
 
   // On a route change: scroll back to the top so the fresh page starts at the
   // top rather than whatever scroll position the previous page left behind.
+  // Also close the mobile More drawer.
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
+    setMoreOpen(false);
   }, [location.pathname]);
 
   const registryChip =
@@ -246,8 +262,48 @@ export default function Layout() {
               {t(tab.tKey)}
             </NavLink>
           ))}
+          {/* More button */}
+          <button
+            onClick={() => setMoreOpen((o) => !o)}
+            className={`flex-1 py-3 text-center font-medium text-[10.5px] tracking-wide transition ${moreOpen ? 'text-cyan' : 'text-[var(--text-dim)]'}`}
+          >
+            More
+          </button>
         </div>
       </nav>
+
+      {/* Mobile "More" slide-up drawer */}
+      {moreOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden" onClick={() => setMoreOpen(false)}>
+          <div
+            className="absolute bottom-[49px] inset-x-0 bg-[var(--bg-panel)] border-t border-[var(--border)] shadow-2xl rounded-t-2xl p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-10 h-1 bg-[var(--border)] rounded-full mx-auto mb-4" />
+            <div className="grid grid-cols-3 gap-2">
+              {MORE_TABS.filter(
+                (tab) =>
+                  (!tab.engineerOnly || user?.role === 'engineer' || user?.role === 'admin') &&
+                  (!tab.adminOnly || user?.role === 'admin')
+              ).map((tab) => (
+                <NavLink
+                  key={tab.to}
+                  to={tab.to}
+                  className={({ isActive }) =>
+                    `flex flex-col items-center justify-center gap-1 py-3 px-2 rounded-xl text-[11px] font-medium text-center transition ${
+                      isActive
+                        ? 'bg-cyan/10 text-cyan'
+                        : 'bg-[var(--bg-panel-2)] text-[var(--text-dim)] hover:text-[var(--text)]'
+                    }`
+                  }
+                >
+                  {t(tab.tKey)}
+                </NavLink>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <footer className="text-center py-6 text-[11px] text-[var(--text-faint)] border-t border-[var(--border)]">
         TerraTwin AI SafeDig Platform &mdash; underground utility data sourced from the official government registry.
