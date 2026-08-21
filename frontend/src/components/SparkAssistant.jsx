@@ -51,7 +51,8 @@ function SparkLogo({ className }) {
 // whole platform: pages, features, roles, demo accounts. The backend routes
 // site-mode questions to Gemini with the platform knowledge base, or answers
 // locally when Gemini is not configured.
-export default function SparkAssistant() {
+export default function SparkAssistant({ hidden }) {
+  if (hidden) return null;
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');

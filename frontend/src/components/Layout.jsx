@@ -314,7 +314,7 @@ export default function Layout() {
         Map data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" className="underline hover:text-cyan transition">OpenStreetMap</a> contributors (ODbL).
       </footer>
 
-      <SparkAssistant />
+      <SparkAssistant hidden={moreOpen} />
     </div>
   );
 }
