@@ -10,7 +10,7 @@
       "destination": "https://terra-twin.onrender.com/uploads/:path*"
     },
     {
-      "source": "/((?!api|uploads).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
