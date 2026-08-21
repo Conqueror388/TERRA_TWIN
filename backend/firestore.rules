@@ -1,0 +1,67 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if request is authenticated
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    // Helper function to get the user's role from their custom token claims
+    function getRole() {
+      return request.auth.token.role;
+    }
+
+    // 1. Excavations & Plans: Workers can create and read their own. Engineers/Admins can read/write all.
+    match /excavations/{id} {
+      allow read: if isAuth();
+      allow write: if isAuth() && (getRole() == 'engineer' || getRole() == 'admin' || request.resource.data.creatorId == request.auth.uid);
+    }
+
+    match /plans/{id} {
+      allow read: if isAuth();
+      allow create: if isAuth();
+      allow update: if isAuth() && (getRole() == 'engineer' || getRole() == 'admin' || resource.data.creatorId == request.auth.uid);
+      allow delete: if isAuth() && (getRole() == 'admin' || resource.data.creatorId == request.auth.uid);
+    }
+
+    // 2. Approved Utilities Registry: Read by all authenticated users. Modifiable only by Engineers/Admins.
+    match /approved_utilities/{id} {
+      allow read: if isAuth();
+      allow write: if isAuth() && (getRole() == 'engineer' || getRole() == 'admin');
+    }
+
+    match /registry_history/{id} {
+      allow read: if isAuth() && (getRole() == 'engineer' || getRole() == 'admin');
+      allow create: if isAuth() && (getRole() == 'engineer' || getRole() == 'admin');
+      allow update, delete: if false; // Registry ledger is append-only
+    }
+
+    // 3. Discovery Reports: Workers can create/read. Engineers can verify.
+    match /discovery_reports/{id} {
+      allow read: if isAuth();
+      allow create: if isAuth();
+      allow update: if isAuth() && (getRole() == 'engineer' || getRole() == 'admin');
+      allow delete: if false;
+    }
+
+    // 4. Audit Logs: Append-only ledger. Read by Engineers/Admins. Never modifiable or deletable.
+    match /audit_logs/{id} {
+      allow read: if isAuth() && (getRole() == 'engineer' || getRole() == 'admin');
+      allow create: if isAuth();
+      allow update, delete: if false;
+    }
+
+    // 5. Device readings (ESP32): Modifiable by authenticated devices or users.
+    match /device_readings/{id} {
+      allow read: if isAuth();
+      allow create, update: if true; // Device key authentication validated at Express gateway level
+      allow delete: if isAuth() && getRole() == 'admin';
+    }
+
+    // 6. User accounts: Read/write by admins.
+    match /users/{id} {
+      allow read: if isAuth();
+      allow write: if isAuth() && getRole() == 'admin';
+    }
+  }
+}

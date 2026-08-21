@@ -1,0 +1,210 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --color-cyan: #5BC8DC;
+  --color-amber: #E5A85C;
+  --color-red: #D9655B;
+  --color-green: #58B27A;
+  --animate-pulse: tt-pulse 2.8s ease-in-out infinite;
+  @keyframes tt-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+  }
+}
+
+/* Minimalist dark palette: flat neutrals, one restrained accent. */
+:root {
+  --bg: #0B0E11;
+  --bg-panel: #12151A;
+  --bg-panel-2: #171B21;
+  --border: #252B33;
+  --text: #E6E8EB;
+  --text-dim: #98A1AC;
+  --text-faint: #636C78;
+  --cyan: #5BC8DC;
+  --amber: #E5A85C;
+  --red: #D9655B;
+  --green: #58B27A;
+}
+
+/* Light theme overrides */
+[data-theme="light"] {
+  --bg: #F4F6F9;
+  --bg-panel: #FFFFFF;
+  --bg-panel-2: #EDF1F5;
+  --border: #D8E0EB;
+  --text: #171E26;
+  --text-dim: #2D3748;
+  --text-faint: #4A5568;
+  --cyan: #0E7490;
+  --amber: #C2410C;
+  --red: #B91C1C;
+  --green: #15803D;
+}
+
+/* Dark theme map tiles invert */
+[data-theme="dark"] .leaflet-tile-container {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+[data-theme="dark"] .leaflet-container {
+  background: #12151A;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display { font-family: 'Space Grotesk', sans-serif; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+
+/* Hide the scrollbar on horizontally scrolling strips (header nav) while
+   keeping mouse/trackpad scrolling functional. */
+.scrollbar-none { scrollbar-width: none; }
+.scrollbar-none::-webkit-scrollbar { display: none; }
+
+/* Shared flat-panel look used across pages. */
+.bg-panel { background: var(--bg-panel); }
+.bg-panel-2 { background: var(--bg-panel-2); }
+
+input[type="number"], input[type="text"], input[type="email"], input[type="password"], select, textarea {
+  width: 100%;
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--cyan); }
+
+/* Prevent Chrome/Safari autofill white/yellow background styling */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--bg-panel-2) inset !important;
+  -webkit-text-fill-color: var(--text) !important;
+  caret-color: var(--text);
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Leaflet needs explicit height on its container, and default z-index kept low
+   so it never floats above the app header. */
+.leaflet-container {
+  height: 420px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  z-index: 1;
+}
+
+/* Page transitions — a quiet fade, no motion flourishes. */
+@keyframes tt-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.page-enter {
+  animation: tt-page-in 0.35s ease-out both;
+}
+
+/* Route-loading bar. */
+@keyframes tt-load-sweep {
+  0% { transform: translateX(-100%); }
+  55% { transform: translateX(8%); }
+  100% { transform: translateX(100%); }
+}
+.tt-load-bar {
+  animation: tt-load-sweep 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* LUXY floating assistant motion */
+@keyframes tt-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.tt-float {
+  animation: tt-float 3.2s ease-in-out infinite;
+}
+
+@keyframes tt-pop-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}
+.tt-pop-in {
+  animation: tt-pop-in 0.22s ease-out both;
+}
+
+/* Staggered content entrance — top-level page panels rise in one after another
+   on every route change. The LUXY launcher/popup are excluded so their own
+   float/pop animations keep working. */
+@keyframes tt-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.page-enter > section > *:not(.tt-float):not(.tt-pop-in) {
+  animation: tt-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.page-enter > section > *:nth-child(1) { animation-delay: 0.02s; }
+.page-enter > section > *:nth-child(2) { animation-delay: 0.07s; }
+.page-enter > section > *:nth-child(3) { animation-delay: 0.12s; }
+.page-enter > section > *:nth-child(4) { animation-delay: 0.17s; }
+.page-enter > section > *:nth-child(5) { animation-delay: 0.22s; }
+.page-enter > section > *:nth-child(6) { animation-delay: 0.27s; }
+.page-enter > section > *:nth-child(7) { animation-delay: 0.32s; }
+.page-enter > section > *:nth-child(8) { animation-delay: 0.37s; }
+.page-enter > section > *:nth-child(9) { animation-delay: 0.42s; }
+.page-enter > section > *:nth-child(10) { animation-delay: 0.47s; }
+
+/* Slow rotation for the app logo mark */
+@keyframes tt-spin-slow {
+  to { transform: rotate(360deg); }
+}
+.tt-spin-slow {
+  transform-origin: 15px 15px;
+  animation: tt-spin-slow 20s linear infinite;
+}
+
+/* Shimmer sweep for loading rows */
+@keyframes tt-shimmer {
+  0% { background-position: -140px 0; }
+  100% { background-position: 140px 0; }
+}
+.tt-shimmer {
+  background: linear-gradient(90deg, var(--bg-panel-2) 25%, var(--bg-panel) 50%, var(--bg-panel-2) 75%);
+  background-size: 280px 100%;
+  animation: tt-shimmer 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter,
+  .tt-load-bar,
+  .tt-float,
+  .tt-pop-in,
+  .page-enter > section > *:not(.tt-float):not(.tt-pop-in),
+  .tt-spin-slow,
+  .tt-shimmer {
+    animation: none !important;
+    animation-delay: 0s !important;
+  }
+}
